@@ -1,3 +1,6 @@
+# Contrail-Netronome Architecture
+  ![architecture](https://github.com/savithruml/netronome-agilio-vrouter/blob/master/images/contrail_agilio_architecture.png)
+
 # Netronome SmartNic Install Guide
 
 NOTE: This guide assumes that you have already inserted the Netronome NIC on the server
