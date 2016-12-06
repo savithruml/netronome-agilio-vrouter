@@ -1,5 +1,8 @@
 # Contrail-Netronome Architecture
   ![architecture](https://github.com/savithruml/netronome-agilio-vrouter/blob/master/images/contrail_agilio_architecture.png)
+  
+# Lab Setup
+  ![lab setup](https://github.com/savithruml/netronome-agilio-vrouter/blob/master/images/lab_setup.png)
 
 # Netronome SmartNic Install Guide
 
