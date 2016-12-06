@@ -29,7 +29,7 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
 
 * Update Linux Kernel to the supported version
 
-         (compute-nodes)# cd ../agilio-vrouter_3.0.2.0_2016.11.15_build-187_3.13.0-68/deps/
+         (compute-nodes)# cd Agilio_vRouter_Juniper_Drop_6/agilio-vrouter_3.0.2.0_2016.11.15_build-187_3.13.0-68/deps/
          (compute-nodes)# tar -xvf linux-3.13.0-68-generic-nfp.tgz
          (compute-nodes)# cd linux-3.13.0-68-generic-nfp/
          (compute-nodes)# ./setup.sh
@@ -109,7 +109,6 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
 
          (controller-node)# cd /opt/contrail/utils/
          (controller-node)# fab install_contrail
-
          (controller-node)# fab setup_interface (Verify if all nodes can talk with each other on Control/Data interface)
 
   ![Ping control/data interface](https://github.com/savithruml/netronome-agilio-vrouter/blob/master/images/control_data_ping.png)
