@@ -125,5 +125,8 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
 
   ![Agilio-vRouter](https://github.com/savithruml/netronome-agilio-vrouter/blob/master/images/agilio_vrouter.png)
 
-         
+* Create VirtIO flavors
+
+         (compute-node)# cd Agilio_vRouter_Juniper_Drop_6/agilio-vrouter_3.0.2.0_2016.11.15_build-187_3.13.0-68/openstack
+         (compute-node)# ./make_virtio_flavors.sh <controller-ip-address>
          
