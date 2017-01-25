@@ -111,16 +111,16 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
          
          
                   bond= {
-                      compute-1 : { 'name': 'bond0', 'member': ['nfp_p0','nfp_p1','nfp_p2','nfp_p3'], 'mode': '802.3ad',    
+                      compute-1 : { 'name': 'bond0', 'member': ['nfp_p0','nfp_p1'], 'mode': '802.3ad',    
                                 'xmit_hash_policy': 'layer3+4' },
-                      compute-2 : { 'name': 'bond0', 'member': ['nfp_p0','nfp_p1','nfp_p2','nfp_p3'], 'mode': '802.3ad',    
+                      compute-2 : { 'name': 'bond0', 'member': ['nfp_p0','nfp_p1'], 'mode': '802.3ad',    
                                 'xmit_hash_policy': 'layer3+4' },
                   }
                   
                   control_data = {
-                                 controller : { 'ip': '172.31.255.1/24', 'gw' : '172.31.255.1', 'device': 'eth1' },
-                                 compute-1 : { 'ip': '172.31.255.2/24', 'gw' : '172.31.255.1', 'device': 'bond0' },
-                                 compute-2 : { 'ip': '172.31.255.3/24', 'gw' : '172.31.255.1', 'device': 'bond0' },
+                      controller : { 'ip': '172.31.255.1/24', 'gw' : '172.31.255.1', 'device': 'eth1' },
+                      compute-1 : { 'ip': '172.31.255.2/24', 'gw' : '172.31.255.1', 'device': 'bond0' },
+                      compute-2 : { 'ip': '172.31.255.3/24', 'gw' : '172.31.255.1', 'device': 'bond0' },
                   }
          
                   env.ns_agilio_vrouter = {
