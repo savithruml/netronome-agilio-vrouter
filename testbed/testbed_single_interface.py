@@ -10,6 +10,10 @@ host1 = 'root@192.168.1.1'
 host2 = 'root@192.168.1.2'
 host3 = 'root@192.168.1.3'
 
+ext_routers = []
+
+router_asn = 64512
+
 host_build = 'root@192.168.1.1'
 
 env.roledefs = {
@@ -17,7 +21,7 @@ env.roledefs = {
     'cfgm': [host1],
     'openstack': [host1],
     'control': [host1],
-    'compute': [host1,host2,host3],
+    'compute': [host1,host2],
     'collector': [host1],
     'webui': [host1],
     'database': [host1],
@@ -50,6 +54,6 @@ control_data = {
 }
 
 env.ns_agilio_vrouter = {
-    host2: {'huge_page_alloc': '24G', 'huge_page_size': '1G', 'coremask': '2,4', 'pinning_mode': 'auto:combine'},
-    host3: {'huge_page_alloc': '24G', 'huge_page_size': '1G', 'coremask': '2,4', 'pinning_mode': 'auto:combine'}
+    host2: {'huge_page_alloc': '24G', 'huge_page_size': '1G', 'coremask': '2,4', 'pinning_mode': 'auto:split',
+    host3: {'huge_page_alloc': '24G', 'huge_page_size': '1G', 'coremask': '2,4', 'pinning_mode': 'auto:split'}
 }
