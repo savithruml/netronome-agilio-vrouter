@@ -82,7 +82,7 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
          (compute-nodes)# dpkg -i nfp-bsp-6000-b0*
          
          (compute-nodes)# ldconfig
-         (compute-nodes)# mod probe nap
+         (compute-nodes)# modprobe nfp
 
          (compute-nodes)# /opt/netronome/bin/nfp-flash --i-accept-the-risk-of-overwriting-miniloader -w /opt/netronome/flash/flash-nic.bin
          (compute-nodes)# /opt/netronome/bin/nfp-one
@@ -91,8 +91,9 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
          (compute-nodes)# cd Agilio_vRouter_Juniper_Drop_7/ns-agilio-vrouter-fab/
          (compute-nodes)# dpkg -i ns-agilio-core-nic_0-8_all.deb
          
-         if using breakout cables, then
          
+  NOTE: Do this step is required if using breakout cables
+
          (compute-nodes)# /opt/netronome/bin/nfp-media --set-media=phy0=4x10G
          (compute-nodes)# service ns-core-nic.autorun clean
          (compute-nodes)# reboot
