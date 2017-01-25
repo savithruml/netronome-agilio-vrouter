@@ -86,6 +86,9 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
 
          (compute-nodes)# /opt/netronome/bin/nfp-flash --i-accept-the-risk-of-overwriting-miniloader -w /opt/netronome/flash/flash-nic.bin
          (compute-nodes)# /opt/netronome/bin/nfp-one
+         
+                          press <ENTER> when prompted
+         
          (compute-nodes)# reboot
 
          (compute-nodes)# cd Agilio_vRouter_Juniper_Drop_7/ns-agilio-vrouter-fab/
