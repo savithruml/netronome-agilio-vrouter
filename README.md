@@ -95,7 +95,7 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
          (compute-nodes)# dpkg -i ns-agilio-core-nic_0-8_all.deb
          
          
-  NOTE: Do this step is required if using breakout cables
+  NOTE: This step is required if using breakout cables
 
          (compute-nodes)# /opt/netronome/bin/nfp-media --set-media=phy0=4x10G
          (compute-nodes)# service ns-core-nic.autorun clean
