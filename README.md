@@ -99,10 +99,10 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
 
          (compute-nodes)# /opt/netronome/bin/nfp-media --set-media=phy0=4x10G
          (compute-nodes)# service ns-core-nic.autorun clean
-         (compute-nodes)# reboot
 
 * Check if NFP interfaces were created
 
+         (compute-nodes)# reboot
          (compute-nodes)# ifconfig | grep -i "nfp"
 
       ![ifconfig](https://github.com/savithruml/netronome-agilio-vrouter/blob/master/images/ifconfig.png)
