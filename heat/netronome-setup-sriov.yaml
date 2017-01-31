@@ -1,0 +1,425 @@
+parameters:
+heat_template_version: 2015-04-30
+description: Heat template to bring up the vMX which is composed of vRE (routing engine) and vPFE (forwarding engine) VMs
+
+parameters:
+  test_name:
+    type: string
+    description: Test specific tag
+    default: dummy
+  l2fwd_instance_name:
+    type: string
+    description: VMX Instance Name
+    default: vmx1
+  l2fwd_img:
+    type: string
+    description: Glance image for vCP VM.
+  l2fwd_flavor:
+    type: string
+    description: Nova flavor for vCP VM.
+    default: e2.vcp
+  mgmt_vn_name:
+    type: string
+  mgmt_vn_prefix:
+    type: string
+  mgmt_vn_prefix_len:
+    type: string
+  left_vn_name:
+    type: string
+    description: Left VN that connects to ge-0/0/0
+    default: 'left'
+  left_vn_prefix:
+    type: string
+    description: IPV4 subnet for Left VN
+  left_vn_prefix_len:
+    type: string
+    description: IPV4 subnet mask for Left VN
+  left_vn_rt:
+    type: string
+    description: RT for the Left VN
+  right_vn_name:
+    type: string
+    description: Right VN that connects to ge-0/0/0
+    default: 'right'
+  right_vn_prefix:
+    type: string
+    description: IPV4 subnet for Right VN
+  right_vn_prefix_len:
+    type: string
+    description: IPV4 subnet mask for Right VN
+  right_vn_rt:
+    type: string
+    description: RT for the Right VN
+  service_template_properties_interface_type_service_interface_type_1:
+    type: string
+    description: Service VNF 1st interface tag
+    default: 'left'
+  service_template_properties_interface_type_service_interface_type_2:
+    type: string
+    description: Service VNF 2nd interface tag
+    default: 'right'
+  service_template_properties_ordered_interfaces:
+    type: string
+    description: Flag to set the ordered interfaces type for the VNF
+    default: True
+  service_template_properties_service_virtualization_type:
+    type: string
+    description: Type of service chaining
+    default: 'virtual-machine'
+  tenant:
+    type: string
+    description: Tenant name
+    default: 'admin'
+  domain:
+    type: string
+    description: Domain name
+    default: 'default-domain'
+  service_policy_match_direction:
+    type: string
+    description: Match directions for the service policy
+    default: '<>'
+  service_policy_match_protocol:
+    type: string
+    default: 'any'
+  service_policy_match_src_port_start:
+    type: string
+    default: -1
+  service_policy_match_src_port_end:
+    type: string
+    default: -1
+  service_policy_match_dst_port_start:
+    type: string
+    default: -1
+  service_policy_match_dst_port_end:
+    type: string
+    default: -1
+  service_policy_action:
+    type: string
+    default: 'pass'
+
+resources:
+  ipam_mgmt:
+    type: OS::ContrailV2::NetworkIpam
+    properties:
+      name:
+        str_replace:
+          template: "%ident%_ipam_mgmt"
+          params:
+            '%ident%': {get_param: 'OS::stack_name'}
+  vn_mgmt:
+    type: OS::ContrailV2::VirtualNetwork
+    depends_on: [ ipam_mgmt ]
+    properties:
+      name:
+        str_replace:
+          template: "%var1%_%var2%"
+          params:
+            '%var1%': {get_param: 'OS::stack_name'}
+            '%var2%': {get_param: mgmt_vn_name}
+      flood_unknown_unicast: true
+      virtual_network_properties:
+        {
+          virtual_network_properties_forwarding_mode: l2_l3,
+          virtual_network_properties_rpf: disable
+        }
+      network_ipam_refs: [{ get_resource: ipam_mgmt }]
+      network_ipam_refs_data:
+        [{
+          network_ipam_refs_data_ipam_subnets:
+            [{
+              network_ipam_refs_data_ipam_subnets_subnet:
+                {
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix: { get_param: mgmt_vn_prefix },
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len: { get_param: mgmt_vn_prefix_len },
+                },
+              network_ipam_refs_data_ipam_subnets_addr_from_start: true
+            }]
+         }]
+
+  vmi_mgmt_l2fwd:
+    type: OS::ContrailV2::VirtualMachineInterface
+    depends_on: [ vn_mgmt, PortTuple ]
+    properties:
+      name:
+        str_replace:
+          template: "%ident%_vmi_mgmt_l2fwd"
+          params:
+            '%ident%': {get_param: 'OS::stack_name'}
+      virtual_network_refs: [{ get_resource: vn_mgmt }]
+      port_tuple_refs: [{ get_resource: PortTuple }]
+      virtual_machine_interface_properties:
+        virtual_machine_interface_properties_service_interface_type: 'management'
+
+  iip_mgmt_l2fwd:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ vmi_mgmt_l2fwd ]
+    properties:
+      name:
+        str_replace:
+          template: "%ident%_iip_mgmt_l2fwd"
+          params:
+            '%ident%': {get_param: 'OS::stack_name'}
+      virtual_machine_interface_refs: [{ get_resource: vmi_mgmt_l2fwd }]
+      virtual_network_refs: [ list_join: [':', { get_attr: [ vn_mgmt, fq_name ] } ] ]
+
+  ipam_left:
+    type: OS::ContrailV2::NetworkIpam
+    properties:
+      name:
+        str_replace:
+          template: "%ident%_ipam_left"
+          params:
+            '%ident%': {get_param: 'OS::stack_name'}
+  vn_left:
+    type: OS::ContrailV2::VirtualNetwork
+    depends_on: [ ipam_left ]
+    properties:
+      name:
+        str_replace:
+          template: "%var1%_%var2%"
+          params:
+            '%var1%': {get_param: 'OS::stack_name'}
+            '%var2%': {get_param: left_vn_name}
+      flood_unknown_unicast: true
+      virtual_network_properties:
+        {
+          virtual_network_properties_forwarding_mode: l2_l3,
+          virtual_network_properties_rpf: disable
+        }
+      network_ipam_refs: [{ get_resource: ipam_left }]
+      route_target_list:
+        route_target_list_route_target: [ { get_param: left_vn_rt } ]
+      network_policy_refs: [ list_join: [':', { get_attr: [ ServicePolicy, fq_name ] } ] ]
+      network_policy_refs_data:
+        [{
+          network_policy_refs_data_sequence:
+            {
+              network_policy_refs_data_sequence_major: 0,
+              network_policy_refs_data_sequence_minor: 0,
+            },
+        }]
+      network_ipam_refs_data:
+        [{
+          network_ipam_refs_data_ipam_subnets:
+            [{
+              network_ipam_refs_data_ipam_subnets_subnet:
+                {
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix: { get_param: left_vn_prefix },
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len: { get_param: left_vn_prefix_len },
+                },
+              network_ipam_refs_data_ipam_subnets_addr_from_start: true
+            }]
+         }]
+
+  vmi_left_l2fwd:
+    type: OS::ContrailV2::VirtualMachineInterface
+    depends_on: [ vn_left, PortTuple ]
+    properties:
+      name:
+        str_replace:
+          template: "%ident%_vmi_left_l2fwd"
+          params:
+            '%ident%': {get_param: 'OS::stack_name'}
+      virtual_network_refs: [{ get_resource: vn_left }]
+      port_tuple_refs: [{ get_resource: PortTuple }]
+      virtual_machine_interface_properties:
+        virtual_machine_interface_properties_service_interface_type: 'left'
+
+  iip_left_l2fwd:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ vmi_left_l2fwd ]
+    properties:
+      name:
+        str_replace:
+          template: "%ident%_iip_left_l2fwd"
+          params:
+            '%ident%': {get_param: 'OS::stack_name'}
+      virtual_machine_interface_refs: [{ get_resource: vmi_left_l2fwd }]
+      virtual_network_refs: [ list_join: [':', { get_attr: [ vn_left, fq_name ] } ] ]
+
+  ipam_right:
+    type: OS::ContrailV2::NetworkIpam
+    properties:
+      name:
+        str_replace:
+          template: "%ident%_ipam_right"
+          params:
+            '%ident%': {get_param: 'OS::stack_name'}
+  vn_right:
+    type: OS::ContrailV2::VirtualNetwork
+    depends_on: [ ipam_right ]
+    properties:
+      name:
+        str_replace:
+          template: "%var1%_%var2%"
+          params:
+            '%var1%': {get_param: 'OS::stack_name'}
+            '%var2%': {get_param: right_vn_name}
+      flood_unknown_unicast: true
+      virtual_network_properties:
+        {
+          virtual_network_properties_forwarding_mode: l2_l3,
+          virtual_network_properties_rpf: disable
+        }
+      network_ipam_refs: [{ get_resource: ipam_right }]
+      route_target_list:
+        route_target_list_route_target: [ { get_param: right_vn_rt } ]
+      network_policy_refs: [ list_join: [':', { get_attr: [ ServicePolicy, fq_name ] } ] ]
+      network_policy_refs_data:
+        [{
+          network_policy_refs_data_sequence:
+            {
+              network_policy_refs_data_sequence_major: 0,
+              network_policy_refs_data_sequence_minor: 0,
+            },
+        }]
+      network_ipam_refs_data:
+        [{
+          network_ipam_refs_data_ipam_subnets:
+            [{
+              network_ipam_refs_data_ipam_subnets_subnet:
+                {
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix: { get_param: right_vn_prefix },
+                  network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len: { get_param: right_vn_prefix_len },
+                },
+              network_ipam_refs_data_ipam_subnets_addr_from_start: true
+            }]
+         }]
+  vmi_right_l2fwd:
+    type: OS::ContrailV2::VirtualMachineInterface
+    depends_on: [ vn_right, PortTuple ]
+    properties:
+      name:
+        str_replace:
+          template: "%ident%_vmi_right_l2fwd"
+          params:
+            '%ident%': {get_param: 'OS::stack_name'}
+      virtual_network_refs: [{ get_resource: vn_right }]
+      port_tuple_refs: [{ get_resource: PortTuple }]
+      virtual_machine_interface_properties:
+        virtual_machine_interface_properties_service_interface_type: 'right'
+
+
+  iip_right_l2fwd:
+    type: OS::ContrailV2::InstanceIp
+    depends_on: [ vmi_right_l2fwd ]
+    properties:
+      name:
+        str_replace:
+          template: "%ident%_iip_right_l2fwd"
+          params:
+            '%ident%': {get_param: 'OS::stack_name'}
+      virtual_machine_interface_refs: [{ get_resource: vmi_right_l2fwd }]
+      virtual_network_refs: [ list_join: [':', { get_attr: [ vn_right, fq_name ] } ] ]
+
+  vFP:
+    depends_on: [ vmi_left_l2fwd, iip_left_l2fwd, vmi_right_l2fwd, iip_right_l2fwd, vmi_mgmt_l2fwd, iip_mgmt_l2fwd ]
+    properties:
+      flavor: {get_param: l2fwd_flavor}
+      image: {get_param: l2fwd_img}
+      name:
+        str_replace:
+          template: "%ident%_l2fwd"
+          params:
+            '%ident%': {get_param: 'OS::stack_name'}
+      networks:
+        - port: {get_resource: vmi_left_l2fwd }
+        - port: {get_resource: vmi_right_l2fwd }
+        - port: {get_resource: vmi_mgmt_l2fwd }
+    type: OS::Nova::Server
+
+  ServiceTemplate:
+    type: OS::ContrailV2::ServiceTemplate
+    properties:
+      name:
+        str_replace:
+          template: "%ident%_service_template"
+          params:
+            '%ident%': {get_param: 'OS::stack_name'}
+      service_template_properties:
+        {
+          service_template_properties_version: '2',
+          service_template_properties_service_mode: 'in-network',
+          service_template_properties_service_type: 'firewall',
+          service_template_properties_interface_type:
+            [
+              {
+              service_template_properties_interface_type_service_interface_type: { get_param: service_template_properties_interface_type_service_interface_type_1 },
+              },
+              {
+              service_template_properties_interface_type_service_interface_type: { get_param: service_template_properties_interface_type_service_interface_type_2 },
+              },
+            ],
+          service_template_properties_ordered_interfaces: { get_param: service_template_properties_ordered_interfaces },
+          service_template_properties_service_virtualization_type: { get_param: service_template_properties_service_virtualization_type },
+        }
+      domain: { get_param: domain }
+
+
+  ServiceInstance:
+    type: OS::ContrailV2::ServiceInstance
+    depends_on: [ ServiceTemplate ]
+    properties:
+      name:
+        str_replace:
+          template: "%ident%_service_instance"
+          params:
+            '%ident%': {get_param: 'OS::stack_name'}
+      service_instance_properties:
+        {
+          service_instance_properties_interface_list:
+              [
+                {
+                  service_instance_properties_interface_list_virtual_network: { list_join: [':', [ {get_param: domain}, {get_param: tenant}, { list_join: ['_',[{get_param: 'OS::stack_name'},{get_param: left_vn_name}]] }]] }
+                },
+                {
+                  service_instance_properties_interface_list_virtual_network: { list_join: [':', [ {get_param: domain}, {get_param: tenant}, { list_join: ['_',[{get_param: 'OS::stack_name'},{get_param: right_vn_name}]] }]] }
+                },
+              ]
+         }
+      service_template_refs: [{ get_resource: ServiceTemplate }]
+  PortTuple:
+    type: OS::ContrailV2::PortTuple
+    depends_on: [ ServiceInstance ]
+    properties:
+      name:
+        str_replace:
+          template: "%ident%_port_tuple"
+          params:
+            '%ident%': {get_param: 'OS::stack_name'}
+      service_instance: { list_join: [':', { get_attr: [ ServiceInstance, fq_name ] } ] }
+
+  ServicePolicy:
+    type: OS::ContrailV2::NetworkPolicy
+    depends_on: [ServiceInstance, PortTuple ]
+    properties:
+    properties:
+      name:
+        str_replace:
+          template: "%ident%_service_policy"
+          params:
+            '%ident%': {get_param: 'OS::stack_name'}
+      network_policy_entries: {
+        network_policy_entries_policy_rule: [{
+		  network_policy_entries_policy_rule_direction: { get_param: service_policy_match_direction },
+		  network_policy_entries_policy_rule_protocol: { get_param: service_policy_match_protocol },
+		  network_policy_entries_policy_rule_src_ports: [{
+			network_policy_entries_policy_rule_src_ports_start_port: { get_param: service_policy_match_src_port_start },
+			network_policy_entries_policy_rule_src_ports_end_port: { get_param: service_policy_match_src_port_end }
+		  }],
+ 		network_policy_entries_policy_rule_dst_ports: [{
+			network_policy_entries_policy_rule_dst_ports_start_port: { get_param: service_policy_match_dst_port_start },
+			network_policy_entries_policy_rule_dst_ports_end_port: { get_param: service_policy_match_dst_port_end }
+		}],
+		network_policy_entries_policy_rule_dst_addresses: [{
+			network_policy_entries_policy_rule_dst_addresses_virtual_network: { list_join: [':', [ {get_param: domain}, {get_param: tenant}, { list_join: ['_',[{get_param: 'OS::stack_name'},{get_param: right_vn_name}]] }]] }
+		}],
+		network_policy_entries_policy_rule_src_addresses: [{
+			network_policy_entries_policy_rule_src_addresses_virtual_network: { list_join: [':', [ {get_param: domain}, {get_param: tenant}, { list_join: ['_',[{get_param: 'OS::stack_name'},{get_param: left_vn_name}]] }]] }
+		}],
+		network_policy_entries_policy_rule_action_list: {
+			network_policy_entries_policy_rule_action_list_simple_action: { get_param: service_policy_action },
+			network_policy_entries_policy_rule_action_list_apply_service: [ list_join: [':', { get_attr: [ ServiceInstance, fq_name ] } ] ]
+	    }
+	  }]
+  }
