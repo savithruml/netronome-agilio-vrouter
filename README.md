@@ -6,7 +6,7 @@
 
 # Netronome SmartNic Install Guide
 
-NOTE: This guide assumes that you have already inserted the Netronome NIC on the server
+NOTE: This guide assumes that you have already inserted the Netronome NIC on the server. For a list of supported servers, refer this [document](https://github.com/savithruml/netronome-agilio-vrouter/blob/master/list-of-supported-servers.pdf)
 
 ## On all nodes
 * Install Ubuntu 14.04.4 on all the nodes in the setup
