@@ -1,0 +1,16 @@
+root@5b5s10-vm1:~# nova flavor-show 52f1f342-207f-4a3f-b56d-822a05ce96df
++----------------------------+--------------------------------------+
+| Property                   | Value                                |
++----------------------------+--------------------------------------+
+| OS-FLV-DISABLED:disabled   | False                                |
+| OS-FLV-EXT-DATA:ephemeral  | 0                                    |
+| disk                       | 40                                   |
+| extra_specs                | {"hw:mem_page_size": "large"}        |
+| id                         | 52f1f342-207f-4a3f-b56d-822a05ce96df |
+| name                       | m1.l2fwd                             |
+| os-flavor-access:is_public | False                                |
+| ram                        | 4096                                 |
+| rxtx_factor                | 1.0                                  |
+| swap                       |                                      |
+| vcpus                      | 3                                    |
++----------------------------+--------------------------------------+
