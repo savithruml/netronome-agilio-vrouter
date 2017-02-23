@@ -22,3 +22,25 @@ Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
 172.17.100.0    172.31.255.254  255.255.255.0   UG    0      0        0 vhost0
 172.31.255.0    0.0.0.0         255.255.255.0   U     0      0        0 vhost0
 192.168.122.0   0.0.0.0         255.255.255.0   U     0      0        0 virbr0
+
+
+
+
+root@5b5s10-vm1:~# ip route
+default via 10.87.65.126 dev eth0 
+10.87.65.0/25 dev eth0  proto kernel  scope link  src 10.87.65.122 
+172.17.100.0/24 via 172.31.255.254 dev eth1 
+172.31.100.0/24 via 172.31.255.254 dev eth1 
+172.31.255.0/24 dev eth1  proto kernel  scope link  src 172.31.255.1 
+root@5b5s10-vm1:~# 
+root@5b5s10-vm1:~# 
+root@5b5s10-vm1:~# 
+root@5b5s10-vm1:~# 
+root@5b5s10-vm1:~# 
+root@5b5s10-vm1:~# ssh root@10.87.65.19 ip route
+root@10.87.65.19's password: 
+default via 10.87.65.126 dev p514p2 
+10.87.65.0/25 dev p514p2  proto kernel  scope link  src 10.87.65.19 
+172.17.100.0/24 via 172.31.255.254 dev vhost0 
+172.31.255.0/24 dev vhost0  proto kernel  scope link  src 172.31.255.3 
+192.168.122.0/24 dev virbr0  proto kernel  scope link  src 192.168.122.1 
