@@ -1,0 +1,24 @@
+root@5b5s10-vm1:~# route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         10.87.65.126    0.0.0.0         UG    0      0        0 eth0
+10.87.65.0      0.0.0.0         255.255.255.128 U     0      0        0 eth0
+172.17.100.0    172.31.255.254  255.255.255.0   UG    0      0        0 eth1
+172.31.100.0    172.31.255.254  255.255.255.0   UG    0      0        0 eth1
+172.31.255.0    0.0.0.0         255.255.255.0   U     0      0        0 eth1
+root@5b5s10-vm1:~# 
+root@5b5s10-vm1:~# 
+root@5b5s10-vm1:~# 
+root@5b5s10-vm1:~# ssh root@10.87.65.19 route -n
+The authenticity of host '10.87.65.19 (10.87.65.19)' can't be established.
+ECDSA key fingerprint is 51:18:85:64:ef:58:39:ec:c4:5c:2e:41:32:d1:6c:1e.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '10.87.65.19' (ECDSA) to the list of known hosts.
+root@10.87.65.19's password: 
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         10.87.65.126    0.0.0.0         UG    0      0        0 p514p2
+10.87.65.0      0.0.0.0         255.255.255.128 U     0      0        0 p514p2
+172.17.100.0    172.31.255.254  255.255.255.0   UG    0      0        0 vhost0
+172.31.255.0    0.0.0.0         255.255.255.0   U     0      0        0 vhost0
+192.168.122.0   0.0.0.0         255.255.255.0   U     0      0        0 virbr0
