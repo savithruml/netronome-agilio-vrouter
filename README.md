@@ -4,6 +4,11 @@
 # Lab Setup
   ![lab setup](https://github.com/savithruml/netronome-agilio-vrouter/blob/master/images/lab_setup.png)
 
+# Pre-Requisites
+
+* Ubuntu 14.04.4
+* Contrail-Cloud 3.1.2 - OpenStack Mitaka
+
 # Netronome SmartNic Install Guide
 
 NOTE: This guide assumes that you have already inserted the Netronome NIC on the server. For a list of supported servers, refer this [document](https://github.com/savithruml/netronome-agilio-vrouter/blob/master/list-of-supported-servers.pdf)
