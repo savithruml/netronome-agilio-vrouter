@@ -12,7 +12,7 @@
 
 # Netronome SmartNic Install Guide
 
-NOTE: This guide assumes that you have already inserted the Netronome NIC on the server. For a list of supported servers, refer this [document](https://github.com/savithruml/netronome-agilio-vrouter/3.1.2/master/list-of-supported-servers.pdf)
+NOTE: This guide assumes that you have already inserted the Netronome NIC on the server. For a list of supported servers, refer this [document](https://github.com/savithruml/netronome-agilio-vrouter/blob/3.1.2/list-of-supported-servers.pdf)
 
 ## On all nodes
 * Install Ubuntu 14.04.4 on all the nodes in the setup
@@ -59,7 +59,7 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
                                   'auto:split'}
                   }
 
-  [Click for example files](https://github.com/savithruml/netronome-agilio-vrouter/tree/3.1.2/testbed)
+  [Click for example files](https://github.com/savithruml/netronome-agilio-vrouter/blob/3.1.2/testbed)
 
 * Bring up the Netronome SmartNIC
 
