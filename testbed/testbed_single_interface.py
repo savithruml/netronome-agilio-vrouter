@@ -54,6 +54,6 @@ control_data = {
 }
 
 env.ns_agilio_vrouter = {
-    compute1: {'huge_page_alloc': '24G', 'huge_page_size': '1G', 'coremask': '2,4', 'pinning_mode': 'auto:split',
+    compute1: {'huge_page_alloc': '24G', 'huge_page_size': '1G', 'coremask': '2,4', 'pinning_mode': 'auto:split'},
     compute2: {'huge_page_alloc': '24G', 'huge_page_size': '1G', 'coremask': '2,4', 'pinning_mode': 'auto:split'}
 }
