@@ -38,24 +38,23 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
 
          (controller-node)# vim /opt/contrail/utils/fabfile/testbeds/testbed.py
          
-         
                   bond= {
-                      compute-1 : { 'name': 'bond0', 'member': ['nfp_p0','nfp_p1','nfp_p2','nfp_p3'], 'mode': '802.3ad',    
+                      compute1 : { 'name': 'bond0', 'member': ['nfp_p0','nfp_p1','nfp_p2','nfp_p3'], 'mode': '802.3ad',    
                                 'xmit_hash_policy': 'layer3+4' },
-                      compute-2 : { 'name': 'bond0', 'member': ['nfp_p0','nfp_p1','nfp_p2','nfp_p3'], 'mode': '802.3ad',    
+                      compute2 : { 'name': 'bond0', 'member': ['nfp_p0','nfp_p1','nfp_p2','nfp_p3'], 'mode': '802.3ad',    
                                 'xmit_hash_policy': 'layer3+4' },
                   }
                   
                   control_data = {
                       controller : { 'ip': '172.31.255.1/24', 'gw' : '172.31.255.1', 'device': 'eth1' },
-                      compute-1 : { 'ip': '172.31.255.2/24', 'gw' : '172.31.255.1', 'device': 'bond0' },
-                      compute-2 : { 'ip': '172.31.255.3/24', 'gw' : '172.31.255.1', 'device': 'bond0' },
+                      compute1 : { 'ip': '172.31.255.2/24', 'gw' : '172.31.255.1', 'device': 'bond0' },
+                      compute2 : { 'ip': '172.31.255.3/24', 'gw' : '172.31.255.1', 'device': 'bond0' },
                   }
          
                   env.ns_agilio_vrouter = {
-                      compute-1: {'huge_page_alloc': '24G', 'huge_page_size': '1G', 'coremask': '2,4', 'pinning_mode': 
+                      compute1: {'huge_page_alloc': '24G', 'huge_page_size': '1G', 'coremask': '2,4', 'pinning_mode': 
                                   'auto:split'},
-                      compute-2: {'huge_page_alloc': '24G', 'huge_page_size': '1G', 'coremask': '2,4', 'pinning_mode': 
+                      compute2: {'huge_page_alloc': '24G', 'huge_page_size': '1G', 'coremask': '2,4', 'pinning_mode': 
                                   'auto:split'}
                   }
 
@@ -66,7 +65,9 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
          (controller-node)# cd /opt/contrail/utils/
          (controller-node)# fab install_ns_agilio_nic
          
-* Change the media configuration of the SmartNIC if you are using breakout cables (4 x 10GbE ---> 1 X 40GbE). This should create *FOUR* NFP interfaces: nfp_p0, nfp_p1, nfp_p2, nfp_p3
+* Change the media configuration of the SmartNIC if you are using breakout cables (4 x 10GbE ---> 1 X 40GbE). 
+
+         This should create four NFP interfaces: nfp_p0, nfp_p1, nfp_p2, nfp_p3
 
          (controller-node)# /opt/netronome/bin/nfp-media --set-media=phy0=4x10G
          (controller-node)# service ns-core-nic.autorun clean
