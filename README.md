@@ -6,8 +6,8 @@
 
 # Pre-Requisites
 
-* Ubuntu 14.04.4 (Kernel 3.13.0-100-generic)
-* Contrail-Cloud 3.1.2.0-65 (OpenStack Mitaka)
+* Ubuntu 14.04.4 (3.13.0-100 Errata 47 patched kernel)
+* Contrail-Cloud 3.1.2.0-65 (OpenStack Kilo/Mitaka)
 * Agilio vRouter 3.1.0.0-124
 
 # Netronome SmartNic Install Guide
@@ -17,101 +17,20 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
 ## On all nodes
 * Install Ubuntu 14.04.4 on all the nodes in the setup
 
-* Download Netronome (Agilio vRouter) package & copy to all the nodes. Untar the copied file
+* Download & install Contrail packages on the nodes
 
-         (all-nodes)# tar -xvf Agilio_vRouter_Juniper_Drop_7.tar
-         (all-nodes)# cd Agilio_vRouter_Juniper_Drop_7/
-         (all-nodes)# tar -xvf ns-agilio-vrouter-fab_3.1.0.0-11.tgz 
-         (all-nodes)# tar -xvf agilio-vrouter_3.1.0.0_2016.11.21_build-11_3.13.0-100.tgz
-
-* Install Contrail packages
-
-         (all-nodes)# cd ns-agilio-vrouter-fab/
-         (all-nodes)# dpkg -i contrail-install-packages_3.1.0.0-25~kilo_all.deb
+         (all-nodes)# dpkg -i contrail-install-packages_3.1.2.0-65~mitaka_all.deb
          (all-nodes)# /opt/contrail/contrail_packages/setup.sh
          (all-nodes)# apt-get update
 
-## On Netronome compute nodes
+* Download Netronome (Agilio vRouter) package & copy to all nodes
 
-* Update Linux Kernel to the supported version
-
-         (compute-nodes)# apt-get install linux-image-3.13.0-100-generic
-         (compute-nodes)# apt-get install linux-headers-3.13.0-100-generic
-         (compute-nodes)# apt-get install linux-image-extra-3.13.0-100-generic
-         (compute-nodes)# apt-get install linux-image-generic
-         (compute-nodes)# apt-get install linux-generic
-
-* Update Grub & reboot
-
-         (compute-nodes)# vim /etc/default/grub
-
-                 Based on NUMA, modify to look as below,
-
-                   GRUB_DEFAULT='1>Ubuntu, with Linux 3.13.0-100-generic'
-
-                   GRUB_CMDLINE_LINUX_DEFAULT="quiet splash"
-                   with
-                   GRUB_CMDLINE_LINUX_DEFAULT="intel_iommu=on iommu=pt intremap=on intel_idle.max_cstate=0             
-                                               processor.max_cstate=0 idle=mwait intel_pstate=disable default_hugepagesz=1G  
-                                               hugepagesz=1G hugepages=224 isolcpus=1-7,17-23,9-15, 25-31"
-
-         (compute-nodes)# update-grub
-         (compute-nodes)# reboot
-
-## On all nodes
-
-* Install Agilio vRouter packages
-
-         (all-nodes)# cd Agilio_vRouter_Juniper_Drop_7/ns-agilio-vrouter-fab/
-         (all-nodes)# cp ns-agilio-vrouter-depends-packages_3.1.0.0-11_amd64.deb /opt/contrail/contrail_install_repo/
-
-         (all-nodes)# dpkg -i ns-agilio-vrouter-depends-packages_3.1.0.0-11_amd64.deb 
-         (all-nodes)# /opt/contrail/contrail_packages_ns_agilio_vrouter/setup.sh
-         (all-nodes)# cd /opt/contrail/contrail_install_repo
+         (all-nodes)# tar -xvf ns-agilio-vrouter-release_3.1.0.0-124.tgz 
+         (all-nodes)# cd ns-agilio-vrouter-release_3.1.0.0-124/
+         (all-nodes)# cp ns-agilio-vrouter-depends-packages_3.1.0.0-124_amd64.deb /opt/contrail/contrail_install_repo/
+         (all-nodes)# cd /opt/contrail/contrail_install_repo/
          (all-nodes)# dpkg-scanpackages . /dev/null | gzip -9c > Packages.gz
          (all-nodes)# apt-get update
-
-* Copy patched Contrail fabric files
-
-         (all-nodes)# cd Agilio_vRouter_Juniper_Drop_7/ns-agilio-vrouter-fab/
-         (all-nodes)# cp fabfile/tasks/*.py /opt/contrail/utils/fabfile/tasks/
-         (all-nodes)# cp fabfile/utils/*.py /opt/contrail/utils/fabfile/utils/
-
-## On Netronome compute nodes
-
-* Install coreNIC firmware & reboot 
-
-  NOTE: Do this only once
-
-         (compute-nodes)# apt-get install dkms libftdi1 libjansson4
-         (compute-nodes)# cd Agilio_vRouter_Juniper_Drop_7/ns-agilio-vrouter-fab/
-         (compute-nodes)# dpkg -i nfp-bsp-6000-b0*
-         
-         (compute-nodes)# ldconfig
-         (compute-nodes)# modprobe nfp
-
-         (compute-nodes)# /opt/netronome/bin/nfp-flash --i-accept-the-risk-of-overwriting-miniloader -w /opt/netronome/flash/flash-nic.bin
-         (compute-nodes)# /opt/netronome/bin/nfp-one
-         
-                          press <ENTER> when prompted
-         
-         (compute-nodes)# reboot
-
-         (compute-nodes)# cd Agilio_vRouter_Juniper_Drop_7/ns-agilio-vrouter-fab/
-         (compute-nodes)# dpkg -i ns-agilio-core-nic_0-8_all.deb
-         
-         
-  NOTE: This step is required if using breakout cables
-
-         (compute-nodes)# /opt/netronome/bin/nfp-media --set-media=phy0=4x10G
-         (compute-nodes)# service ns-core-nic.autorun clean
-
-* Check if NFP interfaces were created
-
-         (compute-nodes)# reboot
-         (compute-nodes)# ifconfig | grep -i "nfp"
-
-      ![ifconfig](https://github.com/savithruml/netronome-agilio-vrouter/blob/master/images/ifconfig.png)
          
 ## On Controller node
 
@@ -121,9 +40,9 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
          
          
                   bond= {
-                      compute-1 : { 'name': 'bond0', 'member': ['nfp_p0','nfp_p1'], 'mode': '802.3ad',    
+                      compute-1 : { 'name': 'bond0', 'member': ['nfp_p0','nfp_p1','nfp_p2','nfp_p3'], 'mode': '802.3ad',    
                                 'xmit_hash_policy': 'layer3+4' },
-                      compute-2 : { 'name': 'bond0', 'member': ['nfp_p0','nfp_p1'], 'mode': '802.3ad',    
+                      compute-2 : { 'name': 'bond0', 'member': ['nfp_p0','nfp_p1','nfp_p2','nfp_p3'], 'mode': '802.3ad',    
                                 'xmit_hash_policy': 'layer3+4' },
                   }
                   
@@ -142,16 +61,23 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
 
   [Click for example files](https://github.com/savithruml/netronome-agilio-vrouter/tree/master/testbed)
 
-* Install Contrail
+* Bring up the Netronome SmartNIC
 
          (controller-node)# cd /opt/contrail/utils/
+         (controller-node)# fab install_ns_agilio_nic
+         
+* Change the media configuration of the SmartNIC if you are using breakout cables (4 x 10GbE ---> 1 X 40GbE). This should create *FOUR* NFP interfaces: nfp_p0, nfp_p1, nfp_p2, nfp_p3
+
+         (controller-node)# /opt/netronome/bin/nfp-media --set-media=phy0=4x10G
+         (controller-node)# service ns-core-nic.autorun clean
+         (controller-node)# reboot
+         
+* Install Contrail
+
+         (controller-node)# cd /opt/contrail/utils
          (controller-node)# fab install_contrail
          (controller-node)# fab setup_interface (Verify if all nodes can talk with each other on Control/Data interface)
-
-  ![Ping control/data interface](https://github.com/savithruml/netronome-agilio-vrouter/blob/master/images/control_data_ping.png)
-
          (controller-node)# fab setup_all
-         (controller-node)# contrail-status
 
 ## On Netronome compute node
 
@@ -166,6 +92,6 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
 
   NOTE: Do this only once
 
-         (compute-node)# cd Agilio_vRouter_Juniper_Drop_7/agilio-vrouter_3.1.0.0_2016.11.21_build-11_3.13.0-100/openstack/
+         (compute-node)# cd /ns-agilio-vrouter-release_3.1.0.0-124/ns-agilio-vrouter_3.1.0.0-124/opt/netronome/openstack
          (compute-node)# ./make_virtio_flavors.sh <controller-ip-address>
          
