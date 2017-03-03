@@ -6,8 +6,9 @@
 
 # Pre-Requisites
 
-* Ubuntu 14.04.4
-* Contrail-Cloud 3.1.2 - OpenStack Mitaka
+* Ubuntu 14.04.4 (Kernel 3.13.0-100-generic)
+* Contrail-Cloud 3.1.2.0-65 (OpenStack Mitaka)
+* Agilio vRouter 3.1.0.0-124
 
 # Netronome SmartNic Install Guide
 
