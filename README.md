@@ -65,7 +65,7 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
          (controller-node)# cd /opt/contrail/utils/
          (controller-node)# fab install_ns_agilio_nic
          
-* Change the media configuration of the SmartNIC if you are using breakout cables (4 x 10GbE ---> 1 X 40GbE). 
+* Change the media configuration of the SmartNIC if you are using breakout cables (4 x 10GbE ---> 1 X 40GbE)
 
          This should create four NFP interfaces: nfp_p0, nfp_p1, nfp_p2, nfp_p3
 
