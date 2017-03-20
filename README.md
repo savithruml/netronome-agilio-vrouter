@@ -170,10 +170,10 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
                                   'auto:split'},
                   }
 
-    [Click for example files](https://github.com/savithruml/netronome-agilio-vrouter/blob/3.1.2/testbed)
+   [Click for example files](https://github.com/savithruml/netronome-agilio-vrouter/blob/3.1.2/testbed)
   
-  * Install Contrail
-  
+ * Install Contrail
+ 
           (controller-node)# cd /opt/contrail/utils
           (controller-node)# fab install_pkg_node:/tmp/contrail-install-packages*.deb,root@<new-compute-ip>
           (controller-node)# ssh root@<new-compute-ip> "cd /opt/contrail/contrail_packages; ./setup.sh"
