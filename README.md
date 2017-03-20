@@ -170,7 +170,7 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
                                   'auto:split'},
                   }
 
-  [Click for example files](https://github.com/savithruml/netronome-agilio-vrouter/blob/3.1.2/testbed)
+    [Click for example files](https://github.com/savithruml/netronome-agilio-vrouter/blob/3.1.2/testbed)
   
   * Install Contrail
   
