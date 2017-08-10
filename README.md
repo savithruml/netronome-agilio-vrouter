@@ -1,8 +1,8 @@
 # Contrail-Netronome Architecture
-  ![architecture](https://github.com/savithruml/netronome-agilio-vrouter/blob/3.1.2/images/contrail_agilio_architecture.png)
+  ![architecture](images/contrail_agilio_architecture.png)
   
 # Lab Setup
-  ![lab setup](https://github.com/savithruml/netronome-agilio-vrouter/blob/3.1.2/images/lab_setup.png)
+  ![lab setup](images/lab_setup.png)
 
 # Pre-Requisites
 
