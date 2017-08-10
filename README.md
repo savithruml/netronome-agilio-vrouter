@@ -87,7 +87,7 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
          (compute-nodes)# contrail-status
          (compute-nodes)# /opt/netronome/libexec/nfp-vrouter-status -r
 
-  ![Agilio-vRouter](https://github.com/savithruml/netronome-agilio-vrouter/blob/3.1.2/images/agilio_vrouter.png)
+  ![Agilio-vRouter](images/agilio_vrouter.png)
 
 * Create VirtIO flavors
 
