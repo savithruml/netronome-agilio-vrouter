@@ -65,6 +65,16 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
 
          (controller-node)# cd /opt/contrail/utils/
          (controller-node)# fab install_ns_agilio_nic
+         (controller-node)# reboot
+         (controller-node)# fab install_ns_agilio_nic
+         
+  NOTE: You might hit an error for **python-dev** package not being found on the target node. 
+  
+         (target-node)# aptitude install python-dev
+         
+  Select **NO** for the first prompt & **YES** for the second. Re-run `fab install_ns_agilio_nic`
+  
+         (controller-node)# fab install_ns_agilio_nic
          
 * Change the media configuration of the SmartNIC if you are using breakout cables (4 x 10GbE ---> 1 X 40GbE)
          
@@ -78,6 +88,13 @@ NOTE: This guide assumes that you have already inserted the Netronome NIC on the
 
          (controller-node)# cd /opt/contrail/utils
          (controller-node)# fab install_contrail
+         
+  NOTE: You might hit an error for **default-jre-headless** package not being found on the target node. 
+  
+         (target-node)# aptitude install default-jre-headless
+         
+  Select **NO** for the first prompt & **YES** for the second. Re-run `fab install_contrail`
+      
          (controller-node)# fab setup_interface (Verify if all nodes can talk with each other on Control/Data interface)
          (controller-node)# fab setup_all
 
